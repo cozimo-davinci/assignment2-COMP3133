@@ -1,0 +1,17 @@
+.mainContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: mistyrose;
+    opacity: 0.9;
+}
+
+.title {
+    margin-top: 1em;
+}
+
+.word {
+    font-weight: bold;
+    text-transform: uppercase;
+}

@@ -1,0 +1,45 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+mat-card-header {
+    margin-bottom: 1em;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+}
+
+.full-width {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.error-message {
+    color: #f44336;
+    margin: 10px 0;
+    text-align: center;
+}
+
+mat-card-actions {
+    text-align: center;
+    padding: 10px;
+    display: inline;
+}
+
+a {
+    color: #1976d2;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+span {
+
+    text-align: center;
+    gap: 5px;
+}
