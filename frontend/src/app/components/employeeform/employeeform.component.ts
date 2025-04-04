@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule, DateAdapter, NativeDateAdapter, provideNativeDateAdapter } from '@angular/material/core'; // Import DateAdapter and NativeDateAdapter
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 
@@ -40,7 +40,7 @@ interface Employee {
     MatSnackBarModule,
     MatDialogModule,
   ],
-  providers: [provideNativeDateAdapter()], // Add this line
+  providers: [provideNativeDateAdapter()],
   templateUrl: './employeeform.component.html',
   styleUrls: ['./employeeform.component.css'],
 })
@@ -83,9 +83,19 @@ export class EmployeeFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.employeeForm.valid) {
+      const rawData = this.employeeForm.value;
       const employeeData = {
-        ...this.employeeForm.value,
-        date_of_joining: new Date(this.employeeForm.value.date_of_joining).toISOString(),
+        first_name: rawData.first_name,
+        last_name: rawData.last_name,
+        email: rawData.email,
+        gender: rawData.gender,
+        designation: rawData.designation,
+        salary: parseFloat(rawData.salary),
+        date_of_joining: new Date(rawData.date_of_joining).toISOString(),
+        department: rawData.department,
+        employee_photo: rawData.employee_photo,
+        // Omit _id unless updating
+        ...(rawData._id ? { _id: rawData._id } : {}),
       };
 
       const mutation = employeeData._id
@@ -128,28 +138,8 @@ export class EmployeeFormComponent implements OnInit {
             }
           `
         : gql`
-            mutation AddEmployee(
-              $first_name: String!
-              $last_name: String!
-              $email: String!
-              $gender: String!
-              $designation: String!
-              $salary: Float!
-              $date_of_joining: Date!
-              $department: String!
-              $employee_photo: String!
-            ) {
-              addEmployee(
-                first_name: $first_name
-                last_name: $last_name
-                email: $email
-                gender: $gender
-                designation: $designation
-                salary: $salary
-                date_of_joining: $date_of_joining
-                department: $department
-                employee_photo: $employee_photo
-              ) {
+            mutation AddEmployee($input: EmployeeInput!) {
+              addEmployee(input: $input) {
                 _id
                 first_name
                 last_name
@@ -164,10 +154,15 @@ export class EmployeeFormComponent implements OnInit {
             }
           `;
 
+      console.log('Sending GraphQL Request:', {
+        mutation: mutation.loc?.source.body,
+        variables: employeeData._id ? employeeData : { input: employeeData },
+      });
+
       this.apollo
         .mutate({
           mutation,
-          variables: employeeData,
+          variables: employeeData._id ? employeeData : { input: employeeData },
         })
         .subscribe({
           next: (result) => {
@@ -178,8 +173,15 @@ export class EmployeeFormComponent implements OnInit {
             );
             this.formSubmitted.emit();
             if (!employeeData._id) this.employeeForm.reset();
+            this.dialogRef.close(true);
           },
           error: (error) => {
+            console.error('GraphQL Error Details:', {
+              message: error.message,
+              networkError: error.networkError,
+              graphQLErrors: error.graphQLErrors,
+              extraInfo: error.extraInfo,
+            });
             this.snackBar.open('Error: ' + error.message, 'Close', { duration: 5000 });
           },
         });
