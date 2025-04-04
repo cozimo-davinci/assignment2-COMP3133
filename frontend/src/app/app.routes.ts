@@ -15,8 +15,20 @@ export const routes: Routes = [
     { path: 'signup', component: SignupComponent, pathMatch: 'full' },
     { path: 'employees', component: EmployeeComponent, canActivate: [AuthGuard], pathMatch: 'full' },
     { path: 'employee/add', component: EmployeeFormComponent, canActivate: [AuthGuard], pathMatch: 'full' },
-    { path: 'employee/edit/:id', component: EmployeeFormComponent, canActivate: [AuthGuard], pathMatch: 'full' },
-    { path: 'employee/view/:id', component: EmployeeDetailComponent, canActivate: [AuthGuard], pathMatch: 'full' },
+    {
+        path: 'employee/edit/:id',
+        component: EmployeeFormComponent,
+        canActivate: [AuthGuard],
+        pathMatch: 'full',
+        data: { renderMode: 'client' } // Render on client-side only
+    },
+    {
+        path: 'employee/view/:id',
+        component: EmployeeDetailComponent,
+        canActivate: [AuthGuard],
+        pathMatch: 'full',
+        data: { renderMode: 'client' } // Render on client-side only
+    },
     { path: 'employees/searchResult', component: EmployeeSearchResultComponent, canActivate: [AuthGuard], pathMatch: 'full' },
     { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
