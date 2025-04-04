@@ -24,7 +24,13 @@ h2 {
 }
 
 .add-button {
-    margin-bottom: 20px;
+    margin-bottom: 1em;
+
+}
+
+.upload-button {
+    margin-bottom: 1em;
+    margin-left: 1em;
 }
 
 table {

@@ -1,0 +1,15 @@
+.drop-zone {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    transition: border-color 0.3s;
+}
+
+.drop-zone.dragover {
+    border-color: #2196f3;
+    background-color: #e3f2fd;
+}
+
+button {
+    margin: 0 5px;
+}

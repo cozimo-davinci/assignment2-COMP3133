@@ -20,6 +20,18 @@ const typeDefs = gql`
 
     }
 
+    input EmployeeInput {
+        first_name: String!
+        last_name: String!
+        email: String!
+        gender: String!
+        designation: String!
+        salary: Float!
+        date_of_joining: Date!
+        department: String!
+        employee_photo: String!
+    }
+
     type Query {
         getAllEmployees: [Employee!]
         getEmployee(_id: ID!): Employee
@@ -28,12 +40,11 @@ const typeDefs = gql`
 
     type Mutation {
         addEmployee(
-            first_name: String, last_name: String,
-            email: String, gender: String, designation: String,
-            salary: Float, date_of_joining: Date, department: String,
-            employee_photo: String,  
+            input: EmployeeInput!  
             ): Employee!
         
+        addMultipleEmployees(inputs: [EmployeeInput!]!): [Employee!]!
+
         updateEmployee(
             _id: ID, first_name: String, last_name: String,
             email: String, gender: String, designation: String,
@@ -49,14 +60,8 @@ const typeDefs = gql`
         employeeAdded: Employee!
         employeeUpdated: Employee!
         employeeDeleted: Employee!
-       
-    
     }
     
     `;
 
 module.exports = typeDefs;
-
-
-
-
