@@ -50,9 +50,9 @@ const functions = {
             }
             return employees;
         }
-    }, // ✅ Corrected: No extra closing bracket or comma here
+    },
 
-    Mutation: {  // ✅ Now properly inside `functions`
+    Mutation: {
         addEmployee: async (_, {
             first_name, last_name, email, gender, designation,
             salary, date_of_joining, department, employee_photo
