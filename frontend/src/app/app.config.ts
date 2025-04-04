@@ -11,21 +11,21 @@ import { inject } from '@angular/core';
 
 export function createApollo() {
   const httpLink = inject(HttpLink); // Inject HttpLink dependency
-  const http = httpLink.create({ uri: 'http://localhost:4255/graphql' });
+  const http = httpLink.create({ uri: 'https://backend-angular-l997.onrender.com/graphql' }); // Updated Render URL
 
   const authLink = setContext((_, { headers }) => {
     const token = localStorage.getItem('auth_token');
     return {
       headers: {
         ...headers,
-        authorization: token ? `Bearer ${token}` : ''
-      }
+        authorization: token ? `Bearer ${token}` : '',
+      },
     };
   });
 
   return {
     link: authLink.concat(http),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache(),
   };
 }
 
@@ -35,6 +35,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withInterceptors([])),
-    provideApollo(createApollo) // Pass the parameterless createApollo
-  ]
+    provideApollo(createApollo), // Pass the parameterless createApollo
+  ],
 };
