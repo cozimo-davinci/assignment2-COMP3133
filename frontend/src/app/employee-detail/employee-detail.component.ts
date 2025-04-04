@@ -36,7 +36,7 @@ export class EmployeeDetailComponent implements OnInit {
     'salary',
     'date_of_joining',
     'department',
-    'employee_photo',
+    // 'employee_photo',
   ];
   dataSource: Employee[] = [];
   employeeId: string | null = null;

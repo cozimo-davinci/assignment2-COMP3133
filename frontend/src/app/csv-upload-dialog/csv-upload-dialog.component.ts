@@ -1,15 +1,22 @@
-import { Component } from "@angular/core";
-import { MatDialogRef } from "@angular/material/dialog";
+import { Component, ViewChild, ElementRef } from "@angular/core";
+import { MatDialogRef, MatDialogModule } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Apollo } from "apollo-angular";
 import gql from "graphql-tag";
 import * as Papa from "papaparse";
-import { MatDialogModule } from "@angular/material/dialog";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-csv-upload-dialog",
   standalone: true,
-  imports: [MatDialogModule],
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
   templateUrl: "./csv-upload-dialog.component.html",
   styleUrls: ["./csv-upload-dialog.component.css"],
 })
@@ -17,6 +24,8 @@ export class CsvUploadDialogComponent {
   selectedFile: File | null = null;
   uploading = false;
   isDragOver = false;
+
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>; // Reference to the file input
 
   constructor(
     private dialogRef: MatDialogRef<CsvUploadDialogComponent>,
@@ -40,16 +49,23 @@ export class CsvUploadDialogComponent {
     this.isDragOver = false;
   }
 
-  closeDialog(): void {
-    this.dialogRef.close();
-  }
-
   onDrop(event: DragEvent): void {
     event.preventDefault();
     this.isDragOver = false;
     if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
       this.selectedFile = event.dataTransfer.files[0];
     }
+  }
+
+  clearFile(): void {
+    this.selectedFile = null;
+    if (this.fileInput && this.fileInput.nativeElement) {
+      this.fileInput.nativeElement.value = ''; // Reset the file input value
+    }
+  }
+
+  closeDialog(): void {
+    this.dialogRef.close();
   }
 
   uploadCsv(): void {
@@ -98,7 +114,7 @@ export class CsvUploadDialogComponent {
           gender: emp.gender,
           designation: emp.designation,
           salary: parseFloat(emp.salary),
-          date_of_joining: emp.date_of_joining, // Assumes ISO format (e.g., "2023-01-01")
+          date_of_joining: emp.date_of_joining,
           department: emp.department,
           employee_photo: emp.employee_photo,
         }));

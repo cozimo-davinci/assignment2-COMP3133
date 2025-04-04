@@ -1,8 +1,9 @@
 .drop-zone {
     border: 2px dashed #ccc;
-    padding: 20px;
+    padding: 80px;
     text-align: center;
     transition: border-color 0.3s;
+    border-radius: 20px;
 }
 
 .drop-zone.dragover {
@@ -12,4 +13,73 @@
 
 button {
     margin: 0 5px;
+}
+
+.selectFileButton {
+    padding: 10px;
+    border-radius: 15px;
+    background-color: bisque;
+    border-style: none;
+    box-shadow: black 2px 4px;
+    font-weight: 600;
+}
+
+.uploadButton {
+    padding: 10px;
+    border-radius: 15px;
+    background-color: bisque;
+    border-style: none;
+    box-shadow: black 2px 4px;
+    font-weight: 600;
+}
+
+.uploadButton:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.cancelButton:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.selectFileButton:hover {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.cancelButton {
+    padding: 10px;
+    border-radius: 15px;
+    background-color: bisque;
+    border-style: none;
+    box-shadow: black 2px 4px;
+    font-weight: 600;
+}
+
+/* New styles for file preview */
+.file-preview {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.file-preview p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.file-preview button {
+    padding: 0;
+    box-shadow: none;
+    background: none;
+    color: #f44336;
+    /* Red color for the close icon */
+}
+
+.file-preview button:hover {
+    transform: scale(1.2);
 }

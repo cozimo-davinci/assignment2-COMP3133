@@ -4,12 +4,21 @@
         [class.dragover]="isDragOver">
         <p>Drag and drop your CSV file here or</p>
         <input type="file" accept=".csv" (change)="onFileSelected($event)" #fileInput hidden />
-        <button mat-raised-button color="primary" (click)="fileInput.click()">Select File</button>
+        <button mat-raised-button color="primary" class="selectFileButton" (click)="fileInput.click()">Select
+            File</button>
+        <!-- File Preview -->
+        <div *ngIf="selectedFile" class="file-preview">
+            <p>Selected File: {{ selectedFile.name }}</p>
+            <button mat-icon-button (click)="clearFile()" title="Remove File">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
     </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-raised-button color="primary" (click)="uploadCsv()" [disabled]="!selectedFile || uploading">
+    <button mat-raised-button color="primary" class="uploadButton" (click)="uploadCsv()"
+        [disabled]="!selectedFile || uploading">
         {{ uploading ? "Uploading..." : "Upload" }}
     </button>
-    <button mat-raised-button color="primary" (click)="closeDialog()">Cancel</button>
+    <button mat-raised-button color="primary" class="cancelButton" (click)="closeDialog()">Cancel</button>
 </mat-dialog-actions>
