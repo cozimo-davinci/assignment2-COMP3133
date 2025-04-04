@@ -1,5 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { MatTableModule } from '@angular/material/table';
@@ -7,12 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { EmployeeFormComponent } from '../employeeform/employeeform.component';
-import { DeleteConfirmDialogComponent } from '../delete-confirm-dialog.component';
-import { Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { EmployeeFormComponent } from '../components/employeeform/employeeform.component';
+import { DeleteConfirmDialogComponent } from '../components/delete-confirm-dialog.component';
 
 interface Employee {
   _id: string;
@@ -28,7 +25,7 @@ interface Employee {
 }
 
 @Component({
-  selector: 'app-employee',
+  selector: 'app-employee-search-result',
   standalone: true,
   imports: [
     CommonModule,
@@ -38,14 +35,11 @@ interface Employee {
     MatIconModule,
     MatDialogModule,
     MatSnackBarModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
   ],
-  templateUrl: './employees.component.html',
-  styleUrls: ['./employees.component.css'],
+  templateUrl: './employee-search-result.component.html',
+  styleUrls: ['./employee-search-result.component.css'],
 })
-export class EmployeeComponent implements OnInit {
+export class EmployeeSearchResultComponent implements OnInit {
   displayedColumns: string[] = [
     'first_name',
     'last_name',
@@ -58,32 +52,36 @@ export class EmployeeComponent implements OnInit {
     'actions',
   ];
   dataSource: Employee[] = [];
-  searchForm: FormGroup;
+  currentDesignation: string | null = null;
+  currentDepartment: string | null = null;
 
   constructor(
+    private route: ActivatedRoute,
     private apollo: Apollo,
-    private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef,
     private router: Router,
-    private fb: FormBuilder
-  ) {
-    this.searchForm = this.fb.group({
-      designation: [''],
-      department: [''],
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) { }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      this.currentDesignation = params['designation'] || null;
+      this.currentDepartment = params['department'] || null;
+      if (!this.currentDesignation && !this.currentDepartment) {
+        this.dataSource = [];
+        this.snackBar.open('No search criteria provided', 'Close', { duration: 3000 });
+        return;
+      }
+      this.fetchSearchResults(this.currentDesignation, this.currentDepartment);
     });
   }
 
-  ngOnInit(): void {
-    this.fetchEmployees();
-  }
-
-  fetchEmployees(): void {
+  fetchSearchResults(designation: string | null, department: string | null): void {
     this.apollo
-      .query<{ getAllEmployees: Employee[] }>({
+      .query<{ getEmployeeByDesignationOrDepartment: Employee[] }>({
         query: gql`
-          query GetAllEmployees {
-            getAllEmployees {
+          query GetEmployeesByDesignationOrDepartment($designation: String, $department: String) {
+            getEmployeeByDesignationOrDepartment(designation: $designation, department: $department) {
               _id
               first_name
               last_name
@@ -97,29 +95,24 @@ export class EmployeeComponent implements OnInit {
             }
           }
         `,
+        variables: { designation, department },
         fetchPolicy: 'network-only',
       })
       .subscribe({
         next: (result) => {
-          this.dataSource = [...result.data.getAllEmployees];
-          this.cdr.detectChanges();
+          this.dataSource = [...result.data.getEmployeeByDesignationOrDepartment];
         },
         error: (error) => {
-          this.snackBar.open('Error fetching employees: ' + error.message, 'Close', { duration: 5000 });
+          this.snackBar.open('Error fetching search results: ' + error.message, 'Close', { duration: 5000 });
+          this.dataSource = [];
         },
       });
   }
 
-  search(): void {
-    const { designation, department } = this.searchForm.value;
-    if (!designation && !department) {
-      this.snackBar.open('Please provide at least one search criterion', 'Close', { duration: 3000 });
-      return;
-    }
-    this.router.navigate(['/employees/searchResult'], { queryParams: { designation, department } });
+  viewEmployee(employee: Employee): void {
+    this.router.navigate(['/employee/view', employee._id]);
   }
 
-  // Existing methods: editEmployee, addEmployee, viewEmployee, deleteEmployee remain unchanged
   editEmployee(employee: Employee): void {
     const dialogRef = this.dialog.open(EmployeeFormComponent, {
       width: '700px',
@@ -128,25 +121,9 @@ export class EmployeeComponent implements OnInit {
     });
 
     dialogRef.componentInstance.formSubmitted.subscribe(() => {
-      this.fetchEmployees();
+      this.fetchSearchResults(this.currentDesignation, this.currentDepartment);
       dialogRef.close();
     });
-  }
-
-  addEmployee(): void {
-    const dialogRef = this.dialog.open(EmployeeFormComponent, {
-      width: '700px',
-      maxHeight: '90vh',
-    });
-
-    dialogRef.componentInstance.formSubmitted.subscribe(() => {
-      this.fetchEmployees();
-      dialogRef.close();
-    });
-  }
-
-  viewEmployee(employee: Employee): void {
-    this.router.navigate(['/employee/view', employee._id]);
   }
 
   deleteEmployee(_id: string): void {
@@ -169,8 +146,8 @@ export class EmployeeComponent implements OnInit {
             refetchQueries: [
               {
                 query: gql`
-                  query GetAllEmployees {
-                    getAllEmployees {
+                  query GetEmployeesByDesignationOrDepartment($designation: String, $department: String) {
+                    getEmployeeByDesignationOrDepartment(designation: $designation, department: $department) {
                       _id
                       first_name
                       last_name
@@ -184,13 +161,13 @@ export class EmployeeComponent implements OnInit {
                     }
                   }
                 `,
+                variables: { designation: this.currentDesignation, department: this.currentDepartment },
               },
             ],
           })
           .subscribe({
             next: () => {
               this.snackBar.open('Employee deleted successfully!', 'Close', { duration: 3000 });
-              this.fetchEmployees();
             },
             error: (error) => {
               this.snackBar.open('Error deleting employee: ' + error.message, 'Close', { duration: 5000 });
@@ -198,5 +175,9 @@ export class EmployeeComponent implements OnInit {
           });
       }
     });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/employees']);
   }
 }

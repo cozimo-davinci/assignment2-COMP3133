@@ -6,24 +6,7 @@ h2 {
     margin-bottom: 20px;
 }
 
-.search-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    align-items: center;
-    width: 50%;
-}
-
-.searchButton {
-    margin-top: -1em;
-}
-
-.search-form mat-form-field {
-    flex: 1;
-
-}
-
-.add-button {
+.back-button {
     margin-bottom: 20px;
 }
 
@@ -49,5 +32,4 @@ td.mat-cell button {
 
 table {
     border-radius: 20px;
-
 }

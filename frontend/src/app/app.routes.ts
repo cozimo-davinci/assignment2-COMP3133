@@ -6,6 +6,8 @@ import { EmployeeFormComponent } from './components/employeeform/employeeform.co
 import { HomeComponent } from './home/home.component';
 import { AuthGuard } from './auth.guard';
 import { EmployeeDetailComponent } from './employee-detail/employee-detail.component';
+import { EmployeeSearchResultComponent } from './employee-search-result/employee-search-result.component';
+
 
 export const routes: Routes = [
     { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -14,5 +16,7 @@ export const routes: Routes = [
     { path: 'employees', component: EmployeeComponent, canActivate: [AuthGuard], pathMatch: 'full' },
     { path: 'employee/add', component: EmployeeFormComponent, canActivate: [AuthGuard], pathMatch: 'full' },
     { path: 'employee/edit/:id', component: EmployeeFormComponent, canActivate: [AuthGuard], pathMatch: 'full' },
-    { path: 'employee/view/:id', component: EmployeeDetailComponent, canActivate: [AuthGuard], pathMatch: 'full' }
+    { path: 'employee/view/:id', component: EmployeeDetailComponent, canActivate: [AuthGuard], pathMatch: 'full' },
+    { path: 'employees/searchResult', component: EmployeeSearchResultComponent, canActivate: [AuthGuard], pathMatch: 'full' },
+    { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

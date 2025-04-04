@@ -1,70 +1,41 @@
 <div class="container">
-    <h2>Employees</h2>
-    <form [formGroup]="searchForm" class="search-form">
-        <mat-form-field appearance="fill">
-            <mat-label>Designation</mat-label>
-            <input matInput formControlName="designation">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-            <mat-label>Department</mat-label>
-            <input matInput formControlName="department">
-        </mat-form-field>
-        <button mat-raised-button color="primary" class="searchButton" (click)="search()">Search</button>
-    </form>
-    <button mat-raised-button color="primary" (click)="addEmployee()" class="add-button">
-        <mat-icon>add</mat-icon> Add Employee
+    <h2>Search Results</h2>
+    <button mat-raised-button color="primary" (click)="goBack()" class="back-button">
+        Back to All Employees
     </button>
-
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-        <!-- First Name Column -->
         <ng-container matColumnDef="first_name">
             <th mat-header-cell *matHeaderCellDef>First Name</th>
             <td mat-cell *matCellDef="let employee">{{ employee.first_name }}</td>
         </ng-container>
-
-        <!-- Last Name Column -->
         <ng-container matColumnDef="last_name">
             <th mat-header-cell *matHeaderCellDef>Last Name</th>
             <td mat-cell *matCellDef="let employee">{{ employee.last_name }}</td>
         </ng-container>
-
-        <!-- Email Column -->
         <ng-container matColumnDef="email">
             <th mat-header-cell *matHeaderCellDef>Email</th>
             <td mat-cell *matCellDef="let employee">{{ employee.email }}</td>
         </ng-container>
-
-        <!-- Gender Column -->
         <ng-container matColumnDef="gender">
             <th mat-header-cell *matHeaderCellDef>Gender</th>
             <td mat-cell *matCellDef="let employee">{{ employee.gender }}</td>
         </ng-container>
-
-        <!-- Designation Column -->
         <ng-container matColumnDef="designation">
             <th mat-header-cell *matHeaderCellDef>Designation</th>
             <td mat-cell *matCellDef="let employee">{{ employee.designation }}</td>
         </ng-container>
-
-        <!-- Salary Column -->
         <ng-container matColumnDef="salary">
             <th mat-header-cell *matHeaderCellDef>Salary</th>
             <td mat-cell *matCellDef="let employee">{{ employee.salary | currency }}</td>
         </ng-container>
-
-        <!-- Date of Joining Column -->
         <ng-container matColumnDef="date_of_joining">
             <th mat-header-cell *matHeaderCellDef>Date of Joining</th>
             <td mat-cell *matCellDef="let employee">{{ employee.date_of_joining | date }}</td>
         </ng-container>
-
-        <!-- Department Column -->
         <ng-container matColumnDef="department">
             <th mat-header-cell *matHeaderCellDef>Department</th>
             <td mat-cell *matCellDef="let employee">{{ employee.department }}</td>
         </ng-container>
-
-        <!-- Actions Column -->
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let employee">
@@ -79,8 +50,6 @@
                 </button>
             </td>
         </ng-container>
-
-        <!-- Header and Row Definitions -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
